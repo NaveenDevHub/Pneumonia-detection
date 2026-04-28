@@ -4,7 +4,7 @@ import tensorflow as tf
 from PIL import ImageOps, Image
 
 # Load model
-model = keras.models.load_model('c:/Users/acer/Desktop/pnemonia classifier/pneumonia-classification-web-app-python-streamlit-main/model/pneumonia_classifier.h5', compile=False)
+model = keras.models.load_model('./model/pneumonia_classifier.h5', compile=False)
 
 # Get the base MobileNet model
 base_model = model.layers[0].layers[0] 
@@ -16,7 +16,7 @@ last_conv_layer = base_model.get_layer('out_relu')
 cam_model = keras.Model(inputs=base_model.input, outputs=last_conv_layer.output)
 
 # Process image
-img = Image.open('c:/Users/acer/Desktop/pnemonia classifier/PNEUMONIA/person1_virus_6.jpeg').convert('RGB')
+img = Image.open('../PNEUMONIA/person1_virus_6.jpeg').convert('RGB')
 img = ImageOps.fit(img, (224, 224), Image.Resampling.LANCZOS)
 img_array = np.asarray(img)
 normalized_img = (img_array.astype(np.float32) / 127.5) - 1
@@ -64,7 +64,8 @@ if heatmap_max > 0:
 
 print('Heatmap max:', np.max(heatmap), 'Heatmap min:', np.min(heatmap), 'Unique values:', len(np.unique(heatmap)))
 
-import cv2
-heatmap_resized = cv2.resize(heatmap, (224, 224), interpolation=cv2.INTER_CUBIC)
-cv2.imwrite('C:/Users/acer/Desktop/pnemonia classifier/pneumonia-classification-web-app-python-streamlit-main/test_heatmap.jpg', (heatmap_resized*255).astype(np.uint8))
+# Use PIL instead of cv2 to avoid extra dependencies
+heatmap_img = Image.fromarray((heatmap * 255).astype(np.uint8))
+heatmap_resized = heatmap_img.resize((224, 224), Image.Resampling.BICUBIC)
+heatmap_resized.save('./test_heatmap.jpg')
 print("Saved raw heatmap to test_heatmap.jpg")

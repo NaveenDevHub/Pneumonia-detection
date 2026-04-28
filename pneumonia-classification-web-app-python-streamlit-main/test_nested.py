@@ -3,8 +3,8 @@ import numpy as np
 import tensorflow as tf
 from PIL import ImageOps, Image
 
-model = keras.models.load_model('c:/Users/acer/Desktop/pnemonia classifier/pneumonia-classification-web-app-python-streamlit-main/model/pneumonia_classifier.h5', compile=False)
-img = Image.open('c:/Users/acer/Desktop/pnemonia classifier/PNEUMONIA/person1_virus_6.jpeg').convert('RGB')
+model = keras.models.load_model('./model/pneumonia_classifier.h5', compile=False)
+img = Image.open('../PNEUMONIA/person1_virus_6.jpeg').convert('RGB')
 img = ImageOps.fit(img, (224, 224), Image.Resampling.LANCZOS)
 img_array = np.asarray(img)
 normalized_img = (img_array.astype(np.float32) / 127.5) - 1
